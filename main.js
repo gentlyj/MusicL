@@ -87,6 +87,7 @@ function createOverlay() {
     height: H,
     x: Math.round(primary.workArea.x + (primary.workArea.width - W) / 2),
     y: primary.workArea.y + primary.workArea.height - H - M, // 底边缘居中
+    // parent: mainWin,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
@@ -104,17 +105,38 @@ function createOverlay() {
   overlayWin.loadFile(path.join(__dirname, 'src', 'overlay.html'));
 //   overlayWin.webContents.openDevTools({ mode: 'detach' });
   overlayWin.setIgnoreMouseEvents(true, { forward: true });
+
+  overlayWin.setSkipTaskbar(true);
+  overlayWin.setAlwaysOnTop(true, 'screen-saver');  // 在所有层级之上但不夺焦点
+  overlayWin.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  overlayWin.on('show', () => overlayWin.setSkipTaskbar(true));
+  overlayWin.on('restore', () => overlayWin.setSkipTaskbar(true));
 }
+
 
 // 让被遮挡/最小化的渲染进程不被节流
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
 app.commandLine.appendSwitch('disable-background-timer-throttling');
 
+// 主窗最小化时，保持 overlay 仍可见且不抢焦点
+function bindMainWindowEvents() {
+  if (!mainWin) return;
+  mainWin.on('minimize', () => {
+    if (overlayWin && !overlayWin.isDestroyed()) {
+      try {
+        overlayWin.showInactive();      // 显示但不抢焦点
+        overlayWin.setSkipTaskbar(true);
+      } catch {}
+    }
+  });
+}
+
 app.whenReady().then(() => {
   createSplash();
   createMain();
   createOverlay();
+  bindMainWindowEvents();
 
   globalShortcut.register('CommandOrControl+Alt+L', () => {
     if (!overlayWin) return;
@@ -215,7 +237,10 @@ ipcMain.handle('fs:scanAlbums', async (_evt, rootDir) => {
         }
       }
       if (tracks.length) {
-        albums.push({ name: e.name, dir, count: tracks.length, tracks });
+        // albums.push({ name: e.name, dir, count: tracks.length, tracks });
+        const coverPath = path.join(dir, 'cover.jpg');
+        const cover = (await fs.pathExists(coverPath)) ? coverPath : null;
+        albums.push({ name: e.name, dir, count: tracks.length, cover, tracks });
       }
     }
     albums.sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN'));
@@ -240,8 +265,8 @@ ipcMain.handle('overlay:setInteract', (_evt, enabled) => {
   if (!overlayWin) return;
   const en = !!enabled;
   overlayWin.setIgnoreMouseEvents(!en, { forward: true });
-  overlayWin.setFocusable(en);
-  if (en) { try { overlayWin.focus(); } catch {} }
+  overlayWin.setFocusable(false);
+//   if (en) { try { overlayWin.focus(); } catch {} }
 });
 
 ipcMain.removeHandler('overlay:hide');
@@ -267,7 +292,7 @@ ipcMain.handle('overlay:setVisible', (_evt, visible) => {
 ipcMain.removeHandler('overlay:toggle');
 ipcMain.handle('overlay:toggle', () => {
   if (!overlayWin) return false;
-  if (overlayWin.isVisible()) overlayWin.hide(); else overlayWin.show();
+  if (overlayWin.isVisible()) overlayWin.hide(); else overlayWin.showInactive();
   return overlayWin.isVisible();
 });
 
