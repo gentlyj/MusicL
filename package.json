@@ -1,0 +1,67 @@
+{
+    "name": "lyrics-overlay",
+    "productName": "MusicL",
+    "version": "0.1.0",
+    "private": true,
+    "main": "main.js",
+    "type": "commonjs",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder"
+    },
+    "dependencies": {
+        "fast-glob": "^3.3.2",
+        "fs-extra": "^11.2.0",
+        "music-metadata": "^7.14.0"
+    },
+    "devDependencies": {
+        "electron-builder": "^24.13.3",
+        "electron": "^33.0.0"
+    },
+    "build": {
+        "appId": "com.yourcompany.lyrics",
+        "productName": "MusicL",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "main.js",
+            "preload.js",
+            "src/**/*",
+            "styles.css",
+            "lrc.js",
+            "res/**/*",
+            "package.json"
+        ],
+        "asar": true,
+        "win": {
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64"
+                    ]
+                },
+                {
+                    "target": "portable",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ],
+            "icon": "res/icon_v2.ico"
+        },
+        "nsis": {
+            "oneClick": true,
+            "perMachine": false,
+            "allowToChangeInstallationDirectory": false,
+            "artifactName": "${productName}-${version}-Setup.${ext}",
+            "shortcutName": "MusicL",
+            "uninstallDisplayName": "MusicL"
+        },
+        "portable": {
+            "artifactName": "${productName}-${version}-Portable.${ext}"
+        }
+    }
+}

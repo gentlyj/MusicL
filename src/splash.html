@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>启动中…</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: transparent
+        }
+
+        .wrap {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 22px;
+            font: 14px/1.2 system-ui, Segoe UI, Microsoft YaHei UI, sans-serif;
+            color: #bbb
+        }
+
+        .logo {
+            width: 128px;
+            height: 128px;
+            background: url(../res/icon_v2.png) center/contain no-repeat;
+            filter: drop-shadow(0 4px 16px rgba(0, 0, 0, .35));
+        }
+
+        .text {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .bar {
+            width: 240px;
+            height: 6px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, .15);
+            overflow: hidden
+        }
+
+        .bar>i {
+            display: block;
+            height: 100%;
+            width: 35%;
+            background: #fff;
+            opacity: .85;
+            border-radius: 6px;
+            animation: slide 1.2s infinite ease-in-out
+        }
+
+        @keyframes slide {
+            0% {
+                transform: translateX(-40%)
+            }
+
+            50% {
+                transform: translateX(120%)
+            }
+
+            100% {
+                transform: translateX(120%)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="logo"></div>
+        <div class="text">
+            <div style="font-size:16px;color:#eee">正在启动…</div>
+            <div class="bar"><i></i></div>
+            <div style="opacity:.7">首次启动可能稍慢，请稍候</div>
+        </div>
+    </div>
+</body>
+
+</html>
