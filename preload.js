@@ -11,5 +11,6 @@ contextBridge.exposeInMainWorld('api', {
   overlayToggle: () => ipcRenderer.invoke('overlay:toggle'),
   prefGet: () => ipcRenderer.invoke('pref:get'),
   prefSet: (patch) => ipcRenderer.invoke('pref:set', patch),
+  onPlayerPause: (cb) => ipcRenderer.on('player:pause', (_e) => cb?.()),
   onOverlay: (cb) => ipcRenderer.on('overlay:update', (_e, d) => cb?.(d))
 });

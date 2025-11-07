@@ -29,6 +29,82 @@ main { display:flex; gap:0; height: calc(100vh - 150px); }
 .track.playing .title{ color:#23c464; font-weight:600; }
 .track:hover { background:#202532; }
 .track > .time { margin-left:auto; color:var(--muted); font-variant-numeric: tabular-nums; }
+/* 隐藏原生 audio 控件 */
+#player {
+  display: none;
+}
+
+/* 自定义播放器条 */
+#playerBar {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pb-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  border: none;
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+}
+.pb-btn:hover {
+  background: rgba(255,255,255,0.14);
+}
+
+#pbCenter {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#pbTitle {
+  font-size: 13px;
+  color: #e5e5e5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#pbProgressWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#pbProgressBg {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#pbProgressFill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: #23c464;
+}
+
+#pbTime {
+  font-size: 10px;
+  color: #9aa0aa;
+  display: flex;
+  gap: 4px;
+}
 .hidden { display:none; }
 footer { border-top:1px solid #232634; padding:8px 12px; display:flex; align-items:center; gap:12px; }
 .now-lyric { font-size:16px; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,.5); }

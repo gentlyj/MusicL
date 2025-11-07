@@ -1,5 +1,5 @@
 {
-    "name": "lyrics-overlay",
+    "name": "MusicL",
     "productName": "MusicL",
     "version": "0.1.0",
     "private": true,
@@ -53,9 +53,9 @@
             "icon": "res/icon_v2.ico"
         },
         "nsis": {
-            "oneClick": true,
+            "oneClick": false,
             "perMachine": false,
-            "allowToChangeInstallationDirectory": false,
+            "allowToChangeInstallationDirectory": true,
             "artifactName": "${productName}-${version}-Setup.${ext}",
             "shortcutName": "MusicL",
             "uninstallDisplayName": "MusicL"

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, ipcMain, globalShortcut, screen } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, globalShortcut, screen, powerMonitor} = require('electron');
 const path = require('path');
 const fs = require('fs-extra');
 const { pathToFileURL } = require('url');
@@ -166,10 +166,23 @@ app.whenReady().then(() => {
       createOverlay();
     }
   });
+  // 系统锁屏 / 休眠 时自动暂停播放
+  const sendPause = () => {
+    try {
+      if (mainWin && !mainWin.isDestroyed()) {
+        mainWin.webContents.send('player:pause');
+      }
+    } catch {}
+  };
+  powerMonitor.on('suspend', sendPause);
+  powerMonitor.on('lock-screen', sendPause);
+  powerMonitor.on('shutdown', sendPause);
 });
 
 app.setName('MusicL');
 app.setAppUserModelId('com.ifading.lyrics');
+// 把用户数据目录放到当前目录下的 userData（或你喜欢的位置）
+app.setPath('userData', path.join(process.cwd(), 'userData'));
 
 
 app.on('window-all-closed', () => {
