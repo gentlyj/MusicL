@@ -181,13 +181,18 @@ app.whenReady().then(() => {
 
 app.setName('MusicL');
 app.setAppUserModelId('com.ifading.lyrics');
-// 把用户数据目录放到当前目录下的 userData（或你喜欢的位置）
+// 把用户数据目录放到当前目录下的 userData（或你喜欢的位置）true
 app.setPath('userData', path.join(process.cwd(), 'userData'));
 
 
 app.on('window-all-closed', () => {
   if (psbId !== null) { try { powerSaveBlocker.stop(psbId); } catch {} }
   if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('browser-window-created', (_e, win) => {
+  // 确保任何窗体默认不闪烁
+  win.flashFrame(false);
 });
 
 // 应用退出前兜底销毁悬浮窗（防多实例/异常状态）
