@@ -12,5 +12,9 @@ contextBridge.exposeInMainWorld('api', {
   prefGet: () => ipcRenderer.invoke('pref:get'),
   prefSet: (patch) => ipcRenderer.invoke('pref:set', patch),
   onPlayerPause: (cb) => ipcRenderer.on('player:pause', (_e) => cb?.()),
-  onOverlay: (cb) => ipcRenderer.on('overlay:update', (_e, d) => cb?.(d))
+  onOverlay: (cb) => ipcRenderer.on('overlay:update', (_e, d) => cb?.(d)),
+    // 新增：悬浮窗等发播放控制命令 -> 主进程
+  playerCommand: (cmd) => ipcRenderer.send('player:command', cmd),
+  // 主进程转给主窗口，这里再转给 renderer.js
+  onPlayerCommand: (cb) => ipcRenderer.on('player:command', (_e, cmd) => cb?.(cmd))
 });

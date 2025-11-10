@@ -30,13 +30,59 @@
       background:rgba(0,0,0,.45); color:#fff; font-size:18px;
       box-shadow:0 1px 3px rgba(0,0,0,.35);
     }
+    #title{
+    font-size:14px;
+    opacity:.9;
+    margin-bottom:4px;
+    white-space:nowrap;
+    max-width:1200px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    }
+
+    #toolbar{
+    position:absolute; top:-10px; right:-10px;
+    display:flex; gap:6px; align-items:center;
+    opacity:0; transition:opacity .15s ease;
+    }
+    #card.show-toolbar #toolbar{ opacity:1; }
+
+    #toolbar-left{
+    display:flex;
+    gap:4px;
+    }
+
+    .ctl-btn{
+    -webkit-app-region: no-drag;
+    cursor:pointer;
+    width:24px;
+    height:24px;
+    border-radius:12px;
+    border:none;
+    background:rgba(0,0,0,.45);
+    color:#fff;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 1px 3px rgba(0,0,0,.35);
+    }
+    .ctl-btn:hover{
+    background:rgba(255,255,255,.2);
+    }
   </style>
 </head>
 <body>
   <div id="card">
     <div id="toolbar">
+        <div id="toolbar-left">
+        <button id="btnPrev" class="ctl-btn" title="上一首">⏮</button>
+        <button id="btnToggle" class="ctl-btn" title="播放/暂停">⏯</button>
+        <button id="btnNext" class="ctl-btn" title="下一首">⏭</button>
+        </div>
       <button id="btnClose" title="关闭悬浮歌词">×</button>
     </div>
+    <div id="title"></div>
     <div id="line"></div>
     <div id="next"></div>
     <div id="nudge"></div>

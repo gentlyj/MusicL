@@ -248,6 +248,33 @@ player.addEventListener('ended', () => {
   playNextByMode();
 });
 
+function playPrevByMode() {
+  if (!currentAlbum || currentIndex < 0) return;
+  const total = currentAlbum.tracks.length;
+  if (!total) return;
+
+  if (playMode === 'shuffle') {
+    if (total === 1) return;
+    let idx;
+    do {
+      idx = Math.floor(Math.random() * total);
+    } while (idx === currentIndex);
+    playTrack(idx);
+  } else {
+    const prev = (currentIndex - 1 + total) % total;
+    playTrack(prev);
+  }
+}
+
+function togglePlay() {
+  if (!player.src) return;
+  if (player.paused) {
+    player.play().catch(() => {});
+  } else {
+    player.pause();
+  }
+}
+
 function playNextByMode() {
   if (!currentAlbum || currentIndex < 0) return;
   const total = currentAlbum.tracks.length;
@@ -366,37 +393,36 @@ if (btnMode) {
 
 // —— 自定义控件：上一首 / 播放暂停 / 下一首 —— 
 if (btnPlayPause) {
-  btnPlayPause.addEventListener('click', () => {
-    if (!player.src) return;
-    if (player.paused) {
-      player.play().catch(() => {});
-    } else {
-      player.pause();
-    }
-  });
+  btnPlayPause.addEventListener('click', togglePlay);
 }
 if (btnPrev) {
-  btnPrev.addEventListener('click', () => {
-    if (!currentAlbum || currentIndex < 0) return;
-    const total = currentAlbum.tracks.length;
-    if (!total) return;
-
-    if (playMode === 'shuffle') {
-      if (total === 1) return;
-      let idx;
-      do { idx = Math.floor(Math.random() * total); } while (idx === currentIndex);
-      playTrack(idx);
-    } else {
-      const prev = (currentIndex - 1 + total) % total;
-      playTrack(prev);
-    }
-  });
+  btnPrev.addEventListener('click', playPrevByMode);
 }
 if (btnNext) {
   btnNext.addEventListener('click', () => {
     playNextByMode();
   });
 }
+
+if (window.api.onPlayerCommand) {
+  window.api.onPlayerCommand((cmd) => {
+    switch (cmd) {
+      case 'prev':
+        playPrevByMode();
+        break;
+      case 'next':
+        playNextByMode();
+        break;
+      case 'toggle':
+        togglePlay();
+        break;
+      case 'pause':
+        if (!player.paused) player.pause();
+        break;
+    }
+  });
+}
+
 
 // 播放/暂停按钮图标跟随实际状态
 player.addEventListener('play', () => {

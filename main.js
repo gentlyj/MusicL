@@ -274,7 +274,19 @@ ipcMain.handle('path:fileUrl', async (_evt, filePath) => {
 });
 
 ipcMain.on('overlay:update', (_evt, payload) => {
-  if (overlayWin) overlayWin.webContents.send('overlay:update', payload);
+  if (!overlayWin || overlayWin.isDestroyed()) return;
+
+  const data = (typeof payload === 'string')
+    ? { mode: 'plain', text: String(payload) }
+    : (payload || {});
+
+  overlayWin.webContents.send('overlay:update', data);
+});
+
+ipcMain.on('player:command', (_evt, cmd) => {
+  if (!mainWin || mainWin.isDestroyed()) return;
+  console.log('player:command', cmd);
+  mainWin.webContents.send('player:command', cmd);
 });
 
 // —— 进入/退出“可交互模式”（允许点击&拖动，并临时可获得焦点）
@@ -289,28 +301,37 @@ ipcMain.handle('overlay:setInteract', (_evt, enabled) => {
 
 ipcMain.removeHandler('overlay:hide');
 ipcMain.handle('overlay:hide', () => {
-  if (!overlayWin) return false;
+  if (!overlayWin || overlayWin.isDestroyed()) return false;
   try {
-    overlayWin.setIgnoreMouseEvents(true, { forward: true }); // 恢复点穿
-    overlayWin.setFocusable(false);
-    overlayWin.hide();                                        // 无条件隐藏
+    overlayWin.hide();  // 只隐藏，不改 ignoreMouseEvents / focusable
     return true;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 });
 
-// 显示/隐藏悬浮窗
 ipcMain.removeHandler('overlay:setVisible');
 ipcMain.handle('overlay:setVisible', (_evt, visible) => {
-  if (!overlayWin) return false;
-  if (visible) overlayWin.show(); else overlayWin.hide();
+  if (!overlayWin || overlayWin.isDestroyed()) {
+    if (visible) {
+      createOverlay();
+      return true;
+    }
+    return false;
+  }
+  if (visible) overlayWin.showInactive();
+  else overlayWin.hide();
   return overlayWin.isVisible();
 });
 
-// 也给一个 toggle 方便按钮直接调用
 ipcMain.removeHandler('overlay:toggle');
 ipcMain.handle('overlay:toggle', () => {
-  if (!overlayWin) return false;
-  if (overlayWin.isVisible()) overlayWin.hide(); else overlayWin.showInactive();
+  if (!overlayWin || overlayWin.isDestroyed()) {
+    createOverlay();
+    return true;
+  }
+  if (overlayWin.isVisible()) overlayWin.hide();
+  else overlayWin.showInactive();
   return overlayWin.isVisible();
 });
 
