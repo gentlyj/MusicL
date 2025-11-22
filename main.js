@@ -285,7 +285,7 @@ ipcMain.on('overlay:update', (_evt, payload) => {
 
 ipcMain.on('player:command', (_evt, cmd) => {
   if (!mainWin || mainWin.isDestroyed()) return;
-  console.log('player:command', cmd);
+//   console.log('player:command', cmd);
   mainWin.webContents.send('player:command', cmd);
 });
 

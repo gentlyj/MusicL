@@ -133,20 +133,20 @@ btnClose?.addEventListener('click', (e) => {
 // 上一首
 btnPrev?.addEventListener('click', (e) => {
   e.stopPropagation();
-  console.log('点击上一首');
+//   console.log('点击上一首');
   safeApi('playerCommand')?.('prev');
 });
 
 // 播放 / 暂停
 btnToggle?.addEventListener('click', (e) => {
-  console.log('点击play');
+//   console.log('点击play');
   e.stopPropagation();
   safeApi('playerCommand')?.('toggle');
 });
 
 // 下一首
 btnNext?.addEventListener('click', (e) => {
-  console.log('点击next');
+//   console.log('点击next');
   e.stopPropagation();
   safeApi('playerCommand')?.('next');
 });
